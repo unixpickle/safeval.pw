@@ -1,3 +1,4 @@
+'use strict';
 var EventEmitter = require('events');
 
 class Queue extends EventEmitter {
@@ -40,9 +41,13 @@ class Queue extends EventEmitter {
 }
 
 function requestIP(req) {
+  // TODO: only accept x-forwarded-for when connection is from
+  // localhost or some other trusted host.
   var forwardedAddr = req.headers['x-forwarded-for'];
   if (forwardedAddr) {
-    return forwardedAddr;
+    var parts = forwardedAddr.split(',');
+    var last = parts[parts.length - 1].trim();
+    return last;
   }
   return req.connection.remoteAddress;
 }
