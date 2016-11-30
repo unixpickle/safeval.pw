@@ -1,3 +1,4 @@
+'use strict';
 var EventEmitter = require('events');
 var REQ_TIMEOUT = 1000 * 60;
 
@@ -47,9 +48,13 @@ class Queue extends EventEmitter {
 }
 
 function requestIP(req) {
-  var forwardedAddr = req.headers['x-forwarded-for'];
-  if (forwardedAddr) {
-    return forwardedAddr;
+  if (req.connection.remoteAddress === req.connection.localAddress) {
+    var forwardedAddr = req.headers['x-forwarded-for'];
+    if (forwardedAddr) {
+      var parts = forwardedAddr.split(',');
+      var last = parts[parts.length - 1].trim();
+      return last;
+    }
   }
   return req.connection.remoteAddress;
 }
