@@ -81,6 +81,8 @@ func (s *Server) ServeEval(w http.ResponseWriter, r *http.Request) {
 	s.connLock.Lock()
 	defer s.connLock.Unlock()
 
+	log.Printf("Evaluating %s (User-Agent: %s)", code, r.Header.Get("user-agent"))
+
 	if s.shouldRefresh() {
 		s.refresh()
 	}
